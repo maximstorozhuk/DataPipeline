@@ -1,3 +1,4 @@
+season,date,regular,away,home,score_away,score_home,q1_away,q2_away,q3_away,q4_away,ot_away,q1_home,q2_home,q3_home,q4_home,ot_home,whos_favored,spread,total,moneyline_away,moneyline_home,h2_spread,h2_total,id_spread,id_total
 2008,2007-10-30,TRUE,por,sa,97,106,26,23,28,20,0,29,30,22,25,0,home,13,189.5,900,-1400,0,1
 2008,2007-10-30,TRUE,utah,gs,117,96,28,34,24,31,0,30,21,21,24,0,home,1,212,100,-120,0,1
 2008,2007-10-30,TRUE,hou,lal,95,93,16,27,27,25,0,25,18,19,31,0,away,5,199,-230,190,0,0
