@@ -1,8 +1,21 @@
+import os
+
 import pandas as pd
 from datetime import datetime
 
 df = pd.read_csv('csv/nba_2008-2025_cleaned.csv')
 df['date'] = pd.to_datetime(df['date'])
+
+_raw_ids_path = 'csv/nba_2008-2025.csv'
+if os.path.isfile(_raw_ids_path):
+    _ids = pd.read_csv(
+        _raw_ids_path,
+        usecols=['season', 'date', 'away', 'home', 'id_spread', 'id_total'],
+    )
+    _ids['date'] = pd.to_datetime(_ids['date'])
+    _ids = _ids.drop_duplicates(subset=['season', 'date', 'away', 'home'], keep='first')
+    df = df.drop(columns=['id_spread', 'id_total'], errors='ignore')
+    df = df.merge(_ids, on=['season', 'date', 'away', 'home'], how='left')
 df['original_index'] = df.index
 df = df.sort_values('date').reset_index(drop=True)
 
