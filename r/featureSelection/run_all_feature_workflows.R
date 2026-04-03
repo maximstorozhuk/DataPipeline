@@ -83,4 +83,13 @@ if (file.exists(l1_sm)) {
   )
 }
 
+cmp <- file.path("r", "featureSelection", "compare_all_selectionsmodels.R")
+if (file.exists(cmp)) {
+  message("\n=== Comparison: all techniques (CSV + scatter plot) ===")
+  tryCatch(
+    source(cmp, local = TRUE),
+    error = function(e) warning(conditionMessage(e), call. = FALSE)
+  )
+}
+
 message("\nDone.")

@@ -28,7 +28,7 @@ For the operations and analysis that are being done in this project, this is not
 
 #### Feature Selection Folder
 
-Run the file "run_all_feature_workflows.R" to go over all feature selector techniques.
+Run the file `r/featureSelection/run_all_feature_workflows.R` to go over all feature selector techniques. When it finishes, it runs `compare_all_selectionsmodels.R`, which writes `r/output/featureSelection/comparison/all_techniques_profit_by_edge.csv` and a scatter-style plot `all_techniques_profit_vs_edge.png` (profit vs minimum edge threshold 0–0.15, one color per method; **ggplot2** recommended for the plot).
 
 #### Base Folder
 
