@@ -32,5 +32,5 @@ Run the file `r/featureSelection/run_all_feature_workflows.R` to go over all fea
 
 #### Base Folder
 
-All other files can be run independently.
+All other files run independently of each other. To achieve the output that is in the output folder, each file needs to be ran.
  
