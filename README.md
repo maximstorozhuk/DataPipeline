@@ -26,11 +26,11 @@ For the operations and analysis that are being done in this project, this is not
 
 ### R Code
 
-## Feature Selection Folder
+#### Feature Selection Folder
 
 Run the file "run_all_feature_workflows.R" to go over all feature selector techniques.
 
-## Base Folder
+#### Base Folder
 
 All other files can be run independently.
  
