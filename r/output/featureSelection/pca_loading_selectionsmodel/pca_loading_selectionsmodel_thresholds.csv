@@ -1,0 +1,17 @@
+"min_edge","rule","total_profit","n_bets"
+0,"P(side) > implied + 0.00",-3694.02,10179
+0.01,"P(side) > implied + 0.01",-2584.85,7924
+0.02,"P(side) > implied + 0.02",-2218.74,6033
+0.03,"P(side) > implied + 0.03",-1469.1,4505
+0.04,"P(side) > implied + 0.04",-1052.96,3375
+0.05,"P(side) > implied + 0.05",-1152.83,2482
+0.06,"P(side) > implied + 0.06",-887.93,1879
+0.07,"P(side) > implied + 0.07",-846.24,1410
+0.08,"P(side) > implied + 0.08",-783.2,1104
+0.09,"P(side) > implied + 0.09",-426.75,881
+0.1,"P(side) > implied + 0.10",-268.97,702
+0.11,"P(side) > implied + 0.11",-277.67,574
+0.12,"P(side) > implied + 0.12",-304.64,455
+0.13,"P(side) > implied + 0.13",-372.8,366
+0.14,"P(side) > implied + 0.14",-236.02,302
+0.15,"P(side) > implied + 0.15",-191.1,260

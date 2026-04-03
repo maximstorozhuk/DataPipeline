@@ -1,0 +1,2 @@
+Feature selection: Rolling glm + value bets; features from filter_univariate
+moneyline_away, moneyline_home, spread, points_against_last10_home, points_against_home, points_for_away, points_for_home, points_for_last10_home, points_for_last10_away, points_against_last10_away, points_against_away, west_conference_home, days_rest_away, west_conference_away, season, date_num, last_game_ot_home, last_game_ot_away, h2_total, id_total

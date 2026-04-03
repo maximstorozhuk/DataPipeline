@@ -26,7 +26,11 @@ For the operations and analysis that are being done in this project, this is not
 
 ### R Code
 
-For any R file that isn't mentioned in this writeup, it can be assumed that the file is independent, and used for exploratory analysis. Any dependencies will be mentioned here.
+## Feature Selection Folder
 
- - l1regularization.r must be ran before l1selectionsmodel.r
+Run the file "run_all_feature_workflows.R" to go over all feature selector techniques.
+
+## Base Folder
+
+All other files can be run independently.
  

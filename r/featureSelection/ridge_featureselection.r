@@ -2,9 +2,7 @@ if (!requireNamespace("glmnet", quietly = TRUE)) {
   stop("Install glmnet: install.packages(\"glmnet\")", call. = FALSE)
 }
 
-# alpha = 1 is pure Lasso (very sparse). alpha in (0,1) is elastic net — often keeps
-# more correlated predictors. Increase toward 1 for sparser fits.
-GLMNET_ALPHA <- 0.88
+RIDGE_TOP_K <- 20L
 
 csv_candidates <- c(
   file.path("csv", "nba_2008-2025_extended.csv"),
@@ -15,7 +13,7 @@ if (is.na(csv_path)) {
   stop("Cannot find nba_2008-2025_extended.csv (expected csv/ under the project root).")
 }
 
-cat("Loading CSV...\n")
+cat("Loading CSV (Ridge feature selection)...\n")
 flush.console()
 nba <- read.csv(
   csv_path,
@@ -61,14 +59,9 @@ use <- cand[vapply(cand, function(nm) {
   is.numeric(x) || is.logical(x) || is.integer(x)
 }, logical(1))]
 
-# Drop near-constant columns; glmnet will standardize internally
 x_list <- lapply(use, function(nm) {
   v <- nba[[nm]]
-  if (is.logical(v)) {
-    as.numeric(v)
-  } else {
-    v
-  }
+  if (is.logical(v)) as.numeric(v) else v
 })
 X <- do.call(cbind, x_list)
 colnames(X) <- use
@@ -91,61 +84,76 @@ cv <- glmnet::cv.glmnet(
   X,
   y,
   family = "binomial",
-  alpha = GLMNET_ALPHA,
+  alpha = 0,
   nfolds = 10L,
   standardize = TRUE,
   type.measure = "class"
 )
 
 coef_min <- stats::coef(cv, s = "lambda.min")
-coef_1se <- stats::coef(cv, s = "lambda.1se")
-lambda_smallest <- min(cv$glmnet.fit$lambda)
-coef_path_min <- stats::coef(cv, s = lambda_smallest)
+cm <- as.matrix(coef_min)
+nm <- rownames(cm)
+cf <- as.numeric(cm[, 1L])
+names(cf) <- nm
+cf_pred <- cf[names(cf) != "(Intercept)"]
 
-to_df <- function(cm, label) {
-  m <- as.matrix(cm)
-  data.frame(
-    lambda = label,
-    feature = rownames(m),
-    coefficient = as.numeric(m[, 1L]),
-    stringsAsFactors = FALSE
-  )
-}
+ord <- order(-abs(cf_pred))
+k_take <- min(RIDGE_TOP_K, as.integer(length(cf_pred)))
+top_idx <- ord[seq_len(k_take)]
+selected_names <- names(cf_pred)[top_idx]
 
-tab <- rbind(
-  to_df(coef_min, "lambda.min"),
-  to_df(coef_1se, "lambda.1se"),
-  to_df(coef_path_min, "lambda.path.min")
-)
-tab <- tab[order(tab$lambda, -abs(tab$coefficient)), ]
-row.names(tab) <- NULL
-
-repo_root <- dirname(dirname(normalizePath(csv_path)))
-out_dir <- file.path(repo_root, "r", "output", "l1regularization")
-dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
-out_coef <- file.path(out_dir, "l1regularization_coefficients.csv")
-out_lambda <- file.path(out_dir, "l1regularization_lambda.csv")
-out_cvplot <- file.path(out_dir, "l1regularization_cv.png")
-out_path <- file.path(out_dir, "l1regularization_coef_path.png")
-
-write.csv(tab, out_coef, row.names = FALSE)
-
-cm_min <- as.matrix(coef_min)
-cm_1se <- as.matrix(coef_1se)
-cm_path <- as.matrix(coef_path_min)
-lam_df <- data.frame(
-  glmnet_alpha = GLMNET_ALPHA,
-  lambda_min = as.numeric(cv$lambda.min),
-  lambda_1se = as.numeric(cv$lambda.1se),
-  lambda_path_min = as.numeric(lambda_smallest),
-  n_nonzero_min = sum(abs(cm_min[-1L, 1L]) > 1e-8),
-  n_nonzero_1se = sum(abs(cm_1se[-1L, 1L]) > 1e-8),
-  n_nonzero_path_min = sum(abs(cm_path[-1L, 1L]) > 1e-8),
+selected_df <- data.frame(
+  feature = selected_names,
+  coefficient = cf_pred[selected_names],
+  abs_coefficient = abs(cf_pred[selected_names]),
+  rank = seq_len(k_take),
+  method = "ridge_top_k_at_lambda.min",
   stringsAsFactors = FALSE
 )
-write.csv(lam_df, out_lambda, row.names = FALSE)
 
-grDevices::png(out_cvplot, width = 9, height = 6, units = "in", res = 120)
+full_df <- data.frame(
+  feature = names(cf_pred),
+  coefficient = as.numeric(cf_pred),
+  abs_coefficient = abs(as.numeric(cf_pred)),
+  selected_for_model = names(cf_pred) %in% selected_names,
+  stringsAsFactors = FALSE
+)
+full_df <- full_df[order(-full_df$abs_coefficient), ]
+row.names(full_df) <- NULL
+
+repo_root <- dirname(dirname(normalizePath(csv_path)))
+out_dir <- file.path(repo_root, "r", "output", "featureSelection", "ridge_featureselection")
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+
+out_sel <- file.path(out_dir, "ridge_selected_features.csv")
+out_full <- file.path(out_dir, "ridge_coefficients_lambda.min.csv")
+out_lam <- file.path(out_dir, "ridge_cv_summary.csv")
+out_cv <- file.path(out_dir, "ridge_cv_plot.png")
+out_path <- file.path(out_dir, "ridge_coef_path.png")
+
+write.csv(selected_df, out_sel, row.names = FALSE)
+write.csv(full_df, out_full, row.names = FALSE)
+utils::write.csv(
+  data.frame(feature = selected_df$feature),
+  file.path(out_dir, "selected_features.csv"),
+  row.names = FALSE
+)
+
+write.csv(
+  data.frame(
+    method = "ridge",
+    alpha = 0,
+    lambda_min = as.numeric(cv$lambda.min),
+    lambda_1se = as.numeric(cv$lambda.1se),
+    n_predictors_in_model = k_take,
+    ridge_top_k = RIDGE_TOP_K,
+    stringsAsFactors = FALSE
+  ),
+  out_lam,
+  row.names = FALSE
+)
+
+grDevices::png(out_cv, width = 9, height = 6, units = "in", res = 120)
 graphics::plot(cv)
 grDevices::dev.off()
 
@@ -153,14 +161,10 @@ grDevices::png(out_path, width = 9, height = 6, units = "in", res = 120)
 graphics::plot(cv$glmnet.fit, xvar = "lambda", label = TRUE)
 grDevices::dev.off()
 
-cat("\nglmnet alpha (1=Lasso, <1=elastic net):", GLMNET_ALPHA, "\n")
-cat("lambda.min (CV misclassification):", cv$lambda.min, "\n")
-cat("lambda.1se:", cv$lambda.1se, "\n")
-cat("lambda.path.min (weakest penalty on path; most nonzero coefs):", lambda_smallest, "\n")
+cat("\nRidge (alpha=0): top", k_take, "predictors by |coef| at lambda.min\n")
+cat("lambda.min:", cv$lambda.min, "\n")
 cat("\nSaved:\n")
-cat(" ", normalizePath(out_coef), "\n")
-cat(" ", normalizePath(out_lambda), "\n")
-cat(" ", normalizePath(out_cvplot), "\n")
-cat(" ", normalizePath(out_path), "\n")
-
-invisible(list(cv = cv, coefficients = tab, lambda = lam_df))
+cat(" ", normalizePath(out_sel), "\n")
+cat(" ", normalizePath(out_full), "\n")
+cat(" ", normalizePath(out_lam), "\n")
+invisible(list(cv = cv, selected = selected_df, full = full_df))

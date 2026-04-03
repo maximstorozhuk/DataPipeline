@@ -1,0 +1,2 @@
+Feature selection: Rolling glm + value bets; features from bic_stepwise
+moneyline_away, spread

@@ -1,0 +1,2 @@
+Feature selection: Rolling glm + value bets; features from ridge_featureselection
+last_game_ot_home, west_conference_home, last_game_ot_away, west_conference_away, days_rest_away, spread, h2_total, id_total, points_against_home, points_for_home, points_for_last10_home, points_against_last10_home, points_against_away, points_against_last10_away, points_for_away, points_for_last10_away, season, total, moneyline_away, moneyline_home
