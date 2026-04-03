@@ -1,13 +1,3 @@
-# Distribution EDA for nba_2008-2025_extended.csv
-# Saves one multi-panel figure to r/output/distribution.png
-#
-# Plot choices (why these):
-# - Histogram + density: shape of continuous variables (unimodal, skew, tails).
-# - Moneyline panels: count histograms only (skewed American odds; density less helpful).
-# - Boxplots vs regular season: quick comparison of line / total by game type.
-# - Normal Q-Q for spread: visual check of normality (useful if you model lines).
-# Run from repo root (DataPipeline/) or from this directory (r/).
-
 csv_candidates <- c(
   file.path("csv", "nba_2008-2025_extended.csv"),
   file.path("..", "csv", "nba_2008-2025_extended.csv")
@@ -94,7 +84,7 @@ plot_hist_count <- function(x, main, xlab = NULL, col = "grey85", xlim = NULL) {
 }
 
 repo_root <- dirname(dirname(normalizePath(csv_path)))
-out_dir <- file.path(repo_root, "r", "output")
+out_dir <- file.path(repo_root, "r", "outputEDA")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 out_png <- file.path(out_dir, "distribution.png")
 

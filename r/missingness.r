@@ -29,7 +29,7 @@ stats <- data.frame(
 stats <- stats[order(-stats$pct_missing, stats$column), ]
 
 repo_root <- dirname(dirname(normalizePath(csv_path)))
-out_dir <- file.path(repo_root, "r", "output")
+out_dir <- file.path(repo_root, "r", "outputEDA")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 out_png <- file.path(out_dir, "missingness.png")
