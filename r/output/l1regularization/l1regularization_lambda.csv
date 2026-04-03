@@ -1,0 +1,2 @@
+"glmnet_alpha","lambda_min","lambda_1se","lambda_path_min","n_nonzero_min","n_nonzero_1se","n_nonzero_path_min"
+0.88,0.000973450176983894,0.058356804957203,0.000736379360089879,20,1,20

@@ -23,3 +23,10 @@ Generate additional data from the cleaned data using Python. Scripts can be foun
 ### Save to BigQuery
 
 For the operations and analysis that are being done in this project, this is not necessary. However, if you would like to access the data through BigQuery, you can request a key.
+
+### R Code
+
+For any R file that isn't mentioned in this writeup, it can be assumed that the file is independent, and used for exploratory analysis. Any dependencies will be mentioned here.
+
+ - l1regularization.r must be ran before l1selectionsmodel.r
+ 

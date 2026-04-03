@@ -1,0 +1,2 @@
+Feature lambda used: lambda.min
+last_game_ot_home, west_conference_home, last_game_ot_away, west_conference_away, h2_total, spread, points_against_home, days_rest_away, points_for_home, points_against_last10_away, days_rest_home, points_against_last10_home, points_for_last10_home, points_against_away, moneyline_away, id_total, total, season, points_for_away, moneyline_home
